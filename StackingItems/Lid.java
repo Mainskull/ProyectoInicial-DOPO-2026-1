@@ -13,7 +13,6 @@ public class Lid
     
     private int number;
     private int width;
-    private boolean isliding;
     private Rectangle Body;
     private int posicionX;
     private int posicionY;
@@ -86,20 +85,6 @@ public class Lid
      */
     public int getwidth(){
         return width;
-    }
-    
-    /**
-     * vuelve visible la tapa en el canvas
-     */
-    public void makeVisible(){
-        Body.makeVisible();
-    }
-    
-    /**
-     * vuelve invisible la tapa en el canvas
-     */
-    public void makeInvisible(){
-        Body.makeInvisible();
     }
     
     //pendiente
