@@ -1,3 +1,4 @@
+import java.util.*;
 
 /**
  * Cup representa una taza que guarda datos de esta y ademas puede ser
@@ -6,18 +7,9 @@
  * @author Daniel Valero y Juan Sebastian Nieto 
  * @version 14.02.2026
  */
-public class Cup
-{
+public class Cup extends Element{
     
-    public static final int PxPerCm = 30; 
-    
-    private int number;
-    private int size;
-    private boolean Lided;
-    private Rectangle[] Body = new Rectangle[3];
-    private int posicionX;
-    private int posicionY;
-
+    private Element topContent;
 
     /**
      * Constructor for objects of class Cup
@@ -31,72 +23,31 @@ public class Cup
      * permitidos "red", "yellow", "blue", "green", "magenta" y "black"
      */
     public Cup(int number, int posicionX, int posicionY, String color) {
-        this.number = number;
-        size = 2*number - 1;
-        Lided = false;
-        this.posicionX = posicionX;
-        this.posicionY = posicionY;
-        creadorCuerpo(posicionX, posicionY, color);
-        
-
+        super(number, 2*number - 1, 2*number - 1, posicionX, posicionY, color);
+        topContent = null;
     }
     
     /**
      * le da la estructura de una taza a los rectangulos dentro
      * del arreglo del cuerpo.
-     * 
-     * @param posicionX posicion inicial en el eje x de la mitad de la taza
-     * @param posicionY posicion inicial en el eje Y del lado inferior de la
-     * base de la taza
      */
-    private void creadorCuerpo(int posicionX, int posicionY, String color){
+    @Override
+    protected void bodyBuilder(){
         
-        int posYPared = posicionY - PxPerCm*size;
-        int posXParedIzquierda = posicionX - ((size*PxPerCm)/2);
-        int alturaParedes = (size-1)*PxPerCm;
+        int posYPared = posicionY - PX_X_CM*getHeight();
+        int posXParedIzquierda = posicionX - ((PX_X_CM*getWidth())/2);
+        int alturaParedes = (getHeight()-1)*PX_X_CM;
         //pared izquierda de la taza
-        Body[0] = new Rectangle(posXParedIzquierda, posYPared, alturaParedes, PxPerCm, color);
+        body.add(new Rectangle(posXParedIzquierda, posYPared, alturaParedes, PX_X_CM, color));
         
-        int posXParedDerecha = posicionX + ((size*PxPerCm)/2 - PxPerCm);
+        int posXParedDerecha = posicionX + ((PX_X_CM*getWidth())/2 - PX_X_CM);
         //pared derecha de la taza
-        Body[2] = new Rectangle(posXParedDerecha, posYPared, alturaParedes, PxPerCm, color);
+        body.add(new Rectangle(posXParedDerecha, posYPared, alturaParedes, PX_X_CM, color));
         
-        int posYBase = posicionY - PxPerCm;
-        int posXBase = posicionX - ((size*PxPerCm)/2);
+        int posYBase = posicionY - PX_X_CM;
+        int posXBase = posicionX - ((PX_X_CM*getWidth())/2);
         //base de la taza
-        Body[1] = new Rectangle(posXBase, posYBase, PxPerCm, size*PxPerCm, color);
-    }
-    
-    /**
-     * Cambia el color de la taza
-     * 
-     * @param color que se desea, solo se permite:
-     * "red", "yellow", "blue", "green", "magenta" y "black"
-     */
-    public void setColor(String color){
-        
-        for(Rectangle rect : Body){
-            rect.changeColor(color);
-        }
-        
-    }
-    
-    /**
-     * 
-     */
-    public void makeVisible(){
-        for (Rectangle rect : Body) {
-            rect.makeVisible();
-        }
-    }
-    
-    /**
-     * 
-     */
-    public void makeInvisible(){
-        for (Rectangle rect : Body) {
-            rect.makeInvisible();
-        }
+        body.add(new Rectangle(posXBase, posYBase, PX_X_CM, PX_X_CM*getWidth(), color));
     }
     
     /**
@@ -106,22 +57,23 @@ public class Cup
      * @param  posicionX    es un numero que dice donde desea que este el
      * centro la base de la taza en el eje X
      */
+    @Override
     public void posicionadorX(int posicionX){
         /*posiciona la pared izquierda en su ubicacion moviendola 
          * junto al extremo izquiedo de la base*/
-        int posicionX0 = posicionX - ((size*PxPerCm)/2);
-        Body[0].positionHorizontal(posicionX0);
+        int posicionX0 = posicionX - ((PX_X_CM*getWidth())/2);
+        body.get(0).positionHorizontal(posicionX0);
         
         /*posiciona el centro de la base en el lugar indicado en 
          * el eje X*/
         
-        int posicionX1 = posicionX - ((size*PxPerCm)/2);
-        Body[1].positionHorizontal(posicionX1);
+        int posicionX1 = posicionX - ((PX_X_CM*getWidth())/2);
+        body.get(1).positionHorizontal(posicionX1);
         
         /*posiciona la pared derecha en su ubicacion moviendola 
          * junto al extremo derecho de la base*/
-        int posicionX2 = posicionX + ((size*PxPerCm)/2 - PxPerCm);
-        Body[2].positionHorizontal(posicionX2);
+        int posicionX2 = posicionX + ((PX_X_CM*getWidth())/2 -PX_X_CM);
+        body.get(2).positionHorizontal(posicionX2);
     }
     
     /**
@@ -131,59 +83,51 @@ public class Cup
      * @param  posicionY es un numero que dice donde desea que este el
      * centro la tapa en el eje Y
      */
+    @Override
     public void posicionadorY(int posicionY){        
-        /*posciona las paredes encima de la base*/
-        int posicionYP = posicionY - PxPerCm*size;
-        Body[0].positionVertical(posicionYP);
-        Body[2].positionVertical(posicionYP);
+        /*posciona las paredes encima de la base y actualiza el top*/
+        int posicionYP = posicionY - PX_X_CM*getHeight();
+        body.get(0).positionVertical(posicionYP);
+        body.get(2).positionVertical(posicionYP);
+        top = posicionYP;
         
         /*posiciona el lado inferior de la base en la posicion indicada
-           en el eje Y*/
-        int posicionYB = posicionY - PxPerCm;
-        Body[1].positionVertical(posicionYB);
+           en el eje Y y actualiza el base*/
+        int posicionYB = posicionY - PX_X_CM;
+        body.get(1).positionVertical(posicionYB);
+        base = posicionYB;
     }
 
     /**
-     * retorna el numero asignado a la taza
+     * dice que el objeto es de la clase cup
+     * 
+     * @return String "Cup"
      */
-    public int getNumber(){
-        return number;
+    @Override
+    public String item(){
+        return "Cup";
     }
     
     /**
-     * retorna el tamaño de la taza
+     * devuelve el elemento que se encuentra encima de cualquier otro 
+     * elemento que este contenido en esta copa
+     * 
+     * @return elemento en la cima dento del actual
      */
-    public int getSize(){
-        return size;
+    @Override
+    public Element getTopContent(){
+        return topContent;
     }
     
     /**
-     * devuelve si esta o no tapado por algo
+     * determina si el elemento contiene algun elemento dentro de si
+     * 
+     * @return true si contiene algo, false si no
      */
-    public boolean isLided(){
-        return Lided;
+    @Override
+    public boolean containsSomenthing(){
+        return topContent != null;
     }
     
-    /**
-     * hace que la taza este tapada
-     */
-    public void setCover(){
-        Lided = true;
-    }
-    
-    /**
-     * hace que la taza este destapada
-     */
-    public void setUncover(){
-        Lided = false;
-    }
-    
-    //pendiente
-    /**
-     * retorna la posicion Y dada para la creacion de la taza
-     */
-    public int getPosicionY(){
-        return 1;
-    }
 }
 

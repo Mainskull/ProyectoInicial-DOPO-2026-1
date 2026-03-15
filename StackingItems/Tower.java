@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
  */
 public class Tower{
     
-    private static final int PxPerCm = 20; //pixeles por centimetro
+    private static final int PX_X_CM = 20; //pixeles por centimetro
     private static final int canvasW = 600; //anchura del canvas
     private static final int canvasH = 600; //altura del canvas
     
@@ -28,11 +28,10 @@ public class Tower{
     
     /*las primeras tres posciones de graphics son los tres lados de la
        torre, las demas son las marcas*/
-    private ArrayList<Rectangle> graphics = new ArrayList<>();
-    
-    private ArrayList<Cup> cups = new ArrayList<>();
-    private ArrayList<Lid> lids = new ArrayList<>();
-    private ArrayList<String[]> items = new ArrayList<>();
+    private ArrayList<Rectangle> graphics;
+    private Element currentTopElement;
+    private ArrayList<Element> stack;
+    private ArrayList<String[]> items;
  
     /**
      * Constructor for objects of class Tower
@@ -48,8 +47,7 @@ public class Tower{
         visible = false;
         ok = true;
         
-        buildGraphics();
-        
+        buildGraphics();        
     }
     
     /**
