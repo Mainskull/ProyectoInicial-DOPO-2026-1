@@ -114,23 +114,35 @@ public class Canvas{
      * @param  newColour   the new colour for the foreground of the Canvas 
      */
     public void setForegroundColor(String colorString){
-        if(colorString.equals("red"))
-            graphic.setColor(Color.red);
-        else if(colorString.equals("black"))
-            graphic.setColor(Color.black);
-        else if(colorString.equals("blue"))
-            graphic.setColor(Color.blue);
-        else if(colorString.equals("yellow"))
-            graphic.setColor(Color.yellow);
-        else if(colorString.equals("green"))
-            graphic.setColor(Color.green);
-        else if(colorString.equals("magenta"))
-            graphic.setColor(Color.magenta);
-        else if(colorString.equals("white"))
-            graphic.setColor(Color.white);
-        else
-            graphic.setColor(Color.black);
+    
+    if(colorString == null){
+        graphic.setColor(Color.black);
+        return;
     }
+
+    if(colorString.equals("red"))
+        graphic.setColor(Color.red);
+    else if(colorString.equals("blue"))
+        graphic.setColor(Color.blue);
+    else if(colorString.equals("green"))
+        graphic.setColor(Color.green);
+    else if(colorString.equals("yellow"))
+        graphic.setColor(Color.yellow);
+    else if(colorString.equals("magenta"))
+        graphic.setColor(Color.magenta);
+    else if(colorString.equals("cyan"))
+        graphic.setColor(Color.cyan);
+    else if(colorString.equals("orange"))
+        graphic.setColor(Color.orange);
+    else if(colorString.equals("pink"))
+        graphic.setColor(Color.pink);
+    else if(colorString.equals("black"))
+        graphic.setColor(Color.black);
+    else if(colorString.equals("white"))
+        graphic.setColor(Color.white);
+    else
+        graphic.setColor(Color.black);
+}
 
     /**
      * Wait for a specified number of milliseconds before finishing.

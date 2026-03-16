@@ -120,12 +120,24 @@ public class Cup extends Element{
     }
     
     /**
+     * hace que la cima de lo que tiene dentro de si el elemento actual sea
+     * un elemento dado
+     * 
+     * @param elemento elemento que se desea poner en la cima de lo contenido
+     * en este
+     */
+    @Override
+    public void setTopContent(Element elemento){
+        topContent = elemento;
+    }
+    
+    /**
      * determina si el elemento contiene algun elemento dentro de si
      * 
      * @return true si contiene algo, false si no
      */
     @Override
-    public boolean containsSomenthing(){
+    public boolean containsSomething(){
         return topContent != null;
     }
     

@@ -32,7 +32,7 @@ public abstract class Element{
      * @param posicionY posicion en la que se desea que se encuentre la parte inferior
      * del elemento
      */
-    public Element(int number, int height, int width, int posicionX, int posicionY, String Color){
+    public Element(int number, int height, int width, int posicionX, int posicionY, String color){
         this.number = number;
         this.height = height;
         this.width = width;
@@ -109,13 +109,45 @@ public abstract class Element{
     }
     
     /**
+     * devuelve el elemento que se encuentra encima de este
+     * 
+     * @return elemento encima del actual
+     */
+    public Element getCoverlet(){
+        return coverlet;
+    }
+    
+    /**
+     * hace que el elemento sea cubierto por otro elemento dado
+     * 
+     * @param elemento es el elemento que cubrira al actual
+     */
+    public void setCoverlet(Element elemento){
+        coverlet = elemento;
+    }
+    
+    /**
+     * hace que la cima de lo que tiene dentro de si el elemento actual sea
+     * un elemento dado
+     * 
+     * por defecto como los elementos no contienen cosas por defecto no se
+     * hara nada
+     * 
+     * @param elemento elemento que se desea poner en la cima de lo contenido
+     * en este
+     */
+    public void setTopContent(Element elemento){
+    
+    }
+    
+    /**
      * determina si el elemento contiene algun elemento dentro de si
      * 
      * por defecto los elementos no contienen nada
      * 
      * @return true si contiene algo, false si no
      */
-    public boolean containsSomenthing(){
+    public boolean containsSomething(){
         return false;
     }
     
@@ -154,15 +186,6 @@ public abstract class Element{
      */
     public int getWidth(){
         return width;
-    }
-    
-    /**
-     * devuelve el elemento que se encuentra encima de este
-     * 
-     * @return elemento encima del actual
-     */
-    public Element getCoverlet(){
-        return coverlet;
     }
     
     /**

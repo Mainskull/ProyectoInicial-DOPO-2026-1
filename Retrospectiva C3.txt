@@ -1,0 +1,63 @@
+RETROSPECTIVA
+TERCER CICLO
+
+
+1.¿Cuáles fueron los mini-ciclos definidos? Justifíquenlos.
+
+- Extension de la clase Rectangle: se extiende lo necesario de la clase rectangle para facilitar la construcción de los elementos principales.
+
+- Creacion de la clase abstracta Element: se construye la clase abstracta Element como plantilla para lo que deben hacer y tener los elementos de la torre.
+
+- reformulacion de la clase Lid: se usa la clase abstracta Element para la construcción básica de la clase Lid y sus funcionalidades sobreescribiendo los metodos de Element, implementando los abstractos y colocando particularidades de Lid.
+
+- reformulacion de la clase Cup: se usa la clase abstracta Element para la construcción básica de la clase Cup y sus funcionalidades sobreescribiendo los metodos de Element, implementando los abstractos y colocando particularidades de Cup.
+
+-reformulacion de la torre: se reformula tower para el uso de Element como sus elementos a interactuar.
+
+-Consulta de información y visibilidad: esto nos permite poder visualizar y corroborar que la información se esté guardando correctamente, además de que a nivel visual esta información termina siendo representada y podremos ver si hace sentido con lo que consultamos y ver.
+
+- reformulacion de manejo de elementos: se reformulan los metodos de manejo de elementos para utilizar los nuevos comportamientos proporcionados por la clase Element.
+
+- Reorganizacion de la torre: con las funciones básicas de manipulación tenemos una base para poder desarrollar funcionalidades más complejas, que aporten valor al simulador.
+
+- Salir del simulador: después de verificar, probar y utilizar lo que puede ofrecer el simulador, concluimos con un método de salida, que permita dejar todo igual que como se comenzó.
+
+-diseño de nuevos metodos: se comienza actualizando el diagrama de clases y haciendo sus respectivos diagramas de secuencia.
+
+-Implementacion de nuevos metodos: utilizando las herramientas desarrolladas se extendera tower y desarrollar los metodos
+
+-metodo cover: se implementa primero al ser cuestion de organizacion ya se tienen antecedentes del desarrollo de este tipo de metodos
+
+-metodos de intercambio: basandose en el diseño se mira la mejor manera de implementar la logica de estos.
+
+2. ¿Cuál es el estado actual del proyecto en términos de mini-ciclos? ¿por qué?
+
+- El orden de los mini ciclos fue bastante acertado, ayudo a reestructurar bien las bases para el desarrollo de la torre, sin embargo se tubo un gran retraso en el desarrollo de la logica del manejo de los elementos, sin embargo se logro un gran resultado y se puede evidenciar el uso del poliformismo en esto. por lo cual una gran parte del primer ciclo tanto en diseño como en implementacion esta practicamente terminado. 
+
+3. ¿Cuál fue el tiempo total invertido por cada uno de ustedes? (Horas/Hombre)
+
+- cada integrante dedico un total de 120 Horas Aproximadamente, desde el momento de publicacion del segundo ciclo
+
+4. ¿Cuál consideran fue el mayor logro? ¿Por qué?
+
+- El mayor logro fue poder utilizar el poliformismo al implementar la clase Element, permitio un mejor desarrollo de la logica de los metodos de tower ademas de condensar codigo y dar aprendizaje del tema
+
+5. ¿Cuál consideran que fue el mayor problema técnico? ¿Qué hicieron para resolverlo?
+
+- El mayor problema tecnico ha sido problemas en la logica, ya que al arreglar ya que los fallos a la hora de probarlo eran extraños y dificiles de detectar, pero con un buen tiempo en revision logramos entender y arreglar estos problemas.
+
+6. ¿Qué hicieron bien como equipo? ¿Qué se comprometen a hacer para mejorar los resultados?
+
+- como equipo tuvimos una buena disposcion al hacer y sacar el proyecto adelante, cada uno trabajo bastante y procuramos comunicarnos lo mas posible para el desarrollo del mismo de una forma clara y comprensible.
+
+- Nos comprometemos a continuar trabajando lo mas que podamos en el proyecto
+
+7. Considerando las prácticas XP incluidas en los laboratorios. ¿cuál fue la más útil? ¿por qué?
+
+- la practica programming in pair
+
+8. ¿Qué referencias usaron? ¿Cuál fue la más útil? Incluyan citas con estándares adecuados.
+
+- Oracle Corporation. (2023). ArrayList (Java Platform SE 17 ). Oracle Help Center. Recuperado el 15 de febrero de 2026, de https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html
+ 
+- DeepSeek. (2025). DeepSeek (versión del 24 de marzo) [Modelo de lenguaje grande]. https://chat.deepseek.com/
