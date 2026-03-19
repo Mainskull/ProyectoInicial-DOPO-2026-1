@@ -363,27 +363,30 @@ public class Tower{
     
     private void rebuildStack() {
 
+        ArrayList<String[]> previousItems = new ArrayList<>();
+
+        for (String[] item : items) {
+            previousItems.add(new String[] { item[0], item[1] });
+        }
+
         for (Element e : stack) {
             e.makeInvisible();
         }
 
         stack.clear();
         currentTopElement = null;
+        items.clear();
 
-        for (int i = 0; i < items.size(); i++) {
+        for (int i = 0; i < previousItems.size(); i++) {
 
-            String type = items.get(i)[0];
-            int number = Integer.parseInt(items.get(i)[1]);
+            String type = previousItems.get(i)[0];
+            int number = Integer.parseInt(previousItems.get(i)[1]);
 
             if (type.equals("cup")) {
-
-                pushCup(number);
-
+            pushCup(number);
             } 
-            else { 
-
-                pushLid(number);
-                
+            else {
+            pushLid(number);
             }
         }
     }
@@ -402,6 +405,109 @@ public class Tower{
         items.remove(idx);
 
         rebuildStack();
+    }
+    
+    public void removeLid(int number) {
+        ok = true;
+        int idx = findIndexOf("lid", number);
+
+        if (idx == -1) { 
+            fail("No existe una tapa con ese numero en la torre.");
+            return; 
+        }
+
+        if (idx - 1 >= 0 && items.get(idx - 1)[0].equals("cup") && Integer.parseInt(items.get(idx - 1)[1]) == number) {
+            items.remove(idx);
+            items.remove(idx - 1);
+        } else {
+            items.remove(idx);
+        }
+
+        rebuildStack();
+    }
+    
+    public void orderTower() {
+        ok = true;
+    
+        for (int i = 0; i < items.size(); i++) {
+            for (int j = 0; j < items.size() - 1; j++) {
+    
+                int num1 = Integer.parseInt(items.get(j)[1]);
+                int num2 = Integer.parseInt(items.get(j + 1)[1]);
+    
+                String type1 = items.get(j)[0];
+                String type2 = items.get(j + 1)[0];
+    
+                // Si el de la izquierda es menor, se intercambian
+                if (num1 < num2) {
+    
+                    String[] temp = items.get(j);
+                    items.set(j, items.get(j + 1));
+                    items.set(j + 1, temp);
+    
+                } 
+                // Si son iguales, cup debe ir antes que lid
+                else if (num1 == num2) {
+    
+                    if (type1.equals("lid") && type2.equals("cup")) {
+    
+                        String[] temp = items.get(j);
+                        items.set(j, items.get(j + 1));
+                        items.set(j + 1, temp);
+    
+                    }
+                }
+            }
+        }
+    
+        rebuildStack();
+    }
+    
+    public void reverseTower() {
+        ok = true;
+    
+        for (int i = 0; i < items.size() / 2; i++) {
+            String[] temp = items.get(i);
+            items.set(i, items.get(items.size() - 1 - i));
+            items.set(items.size() - 1 - i, temp);
+        }
+    
+        ArrayList<String[]> newItems = new ArrayList<>();
+        int totalHeight = 0;
+    
+        for (int i = 0; i < items.size(); i++) {
+            String type = items.get(i)[0];
+            int number = Integer.parseInt(items.get(i)[1]);
+            int itemHeight;
+    
+            if (type.equals("cup")) {
+                itemHeight = 2 * number - 1;
+            } 
+            else {
+                itemHeight = 1;
+            }
+    
+            if (totalHeight + itemHeight <= height) {
+                newItems.add(items.get(i));
+                totalHeight += itemHeight;
+            }
+        }
+    
+        items = newItems;
+        rebuildStack();
+    }
+    
+    public int height() {
+        ok = true;
+    
+        if (currentTopElement == null) {
+            return 0;
+        }
+    
+        int baseTower = posicionTowerY + height * PX_X_CM / 2;
+        int topStack = currentTopElement.getPosYTop();
+    
+        return (baseTower - topStack) / PX_X_CM;
     }
     
     /**
