@@ -1,3 +1,6 @@
+package dominio;
+
+import shape.*;
 import java.util.*;
 import javax.swing.JOptionPane;
 
@@ -497,7 +500,7 @@ public class Tower{
         rebuildStack();
     }
     
-    public int height() {
+    public int height(){
         ok = true;
     
         if (currentTopElement == null) {

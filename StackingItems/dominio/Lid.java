@@ -1,3 +1,5 @@
+package dominio;
+
 
 /**
  * lid representa una tapa de una copa, puede ser manipulado sus datos y

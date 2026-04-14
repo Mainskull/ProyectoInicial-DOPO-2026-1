@@ -1,37 +1,37 @@
-import java.awt.*;
+package shape;
+
 
 /**
- * A triangle that can be manipulated and that draws itself on a canvas.
+ * clase abstracta que representa a figuras geometricas o en general
  * 
- * @author  Michael Kolling and David J. Barnes
- * @version 1.0  (15 July 2000)
+ * @author Daniel Valero, Juan Nieto
+ * @version 06.24.2026
  */
-
-public class Triangle{
+public abstract class Figure
+{
     
-    public static int VERTICES=3;
+    protected int xPosition;
+    protected int yPosition;
+    protected String color;
+    protected boolean isVisible;
     
-    private int height;
-    private int width;
-    private int xPosition;
-    private int yPosition;
-    private String color;
-    private boolean isVisible;
-
     /**
-     * Create a new triangle at default position with default color.
+     * Constructor for objects of class Figure
+     * 
+     * @param xPosition posicion en el eje x de la figura
+     * @param yPosition posicion en el eje y de la figura
+     * @param color color que tendra la figura
      */
-    public Triangle(){
-        height = 30;
-        width = 40;
-        xPosition = 140;
-        yPosition = 15;
-        color = "green";
-        isVisible = false;
+    public Figure(int xPosition, int yPosition, String color)
+    {
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
+        this.color = color;
+        this.isVisible = false;
     }
 
     /**
-     * Make this triangle visible. If it was already visible, do nothing.
+     * Make this figure visible. If it was already visible, do nothing.
      */
     public void makeVisible(){
         isVisible = true;
@@ -39,7 +39,7 @@ public class Triangle{
     }
     
     /**
-     * Make this triangle invisible. If it was already invisible, do nothing.
+     * Make this rectangle invisible. If it was already invisible, do nothing.
      */
     public void makeInvisible(){
         erase();
@@ -47,35 +47,35 @@ public class Triangle{
     }
     
     /**
-     * Move the triangle a few pixels to the right.
+     * Move the rectangle a few pixels to the right.
      */
     public void moveRight(){
         moveHorizontal(20);
     }
 
     /**
-     * Move the triangle a few pixels to the left.
+     * Move the rectangle a few pixels to the left.
      */
     public void moveLeft(){
         moveHorizontal(-20);
     }
 
     /**
-     * Move the triangle a few pixels up.
+     * Move the rectangle a few pixels up.
      */
     public void moveUp(){
         moveVertical(-20);
     }
 
     /**
-     * Move the triangle a few pixels down.
+     * Move the rectangle a few pixels down.
      */
     public void moveDown(){
         moveVertical(20);
     }
 
     /**
-     * Move the triangle horizontally.
+     * Move the rectangle horizontally.
      * @param distance the desired distance in pixels
      */
     public void moveHorizontal(int distance){
@@ -85,7 +85,7 @@ public class Triangle{
     }
 
     /**
-     * Move the triangle vertically.
+     * Move the rectangle vertically.
      * @param distance the desired distance in pixels
      */
     public void moveVertical(int distance){
@@ -95,7 +95,7 @@ public class Triangle{
     }
 
     /**
-     * Slowly move the triangle horizontally.
+     * Slowly move the rectangle horizontally.
      * @param distance the desired distance in pixels
      */
     public void slowMoveHorizontal(int distance){
@@ -115,7 +115,7 @@ public class Triangle{
     }
 
     /**
-     * Slowly move the triangle vertically.
+     * Slowly move the rectangle vertically.
      * @param distance the desired distance in pixels
      */
     public void slowMoveVertical(int distance){
@@ -133,18 +133,6 @@ public class Triangle{
             draw();
         }
     }
-
-    /**
-     * Change the size to the new size
-     * @param newHeight the new height in pixels. newHeight must be >=0.
-     * @param newWidht the new width in pixels. newWidht must be >=0.
-     */
-    public void changeSize(int newHeight, int newWidth) {
-        erase();
-        height = newHeight;
-        width = newWidth;
-        draw();
-    }
     
     /**
      * Change the color. 
@@ -155,27 +143,17 @@ public class Triangle{
         color = newColor;
         draw();
     }
-
+    
+    protected abstract void draw();
+    
     /*
-     * Draw the triangle with current specifications on screen.
+     * Erase the rectangle on screen.
      */
-    private void draw(){
-        if(isVisible) {
-            Canvas canvas = Canvas.getCanvas();
-            int[] xpoints = { xPosition, xPosition + (width/2), xPosition - (width/2) };
-            int[] ypoints = { yPosition, yPosition + height, yPosition + height };
-            canvas.draw(this, color, new Polygon(xpoints, ypoints, 3));
-            canvas.wait(10);
-        }
-    }
-
-    /*
-     * Erase the triangle on screen.
-     */
-    private void erase(){
+    protected void erase(){
         if(isVisible) {
             Canvas canvas = Canvas.getCanvas();
             canvas.erase(this);
         }
     }
+    
 }
