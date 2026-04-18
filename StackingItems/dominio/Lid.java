@@ -1,5 +1,6 @@
 package dominio;
 
+import shape.*;
 
 /**
  * lid representa una tapa de una copa, puede ser manipulado sus datos y
@@ -9,6 +10,8 @@ package dominio;
  * @version 14.02.2026 
  */
 public class Lid extends Element{
+    
+    
     /**
      * Constructor for objects of class Lid
      * 
@@ -25,17 +28,6 @@ public class Lid extends Element{
     }
     
     /**
-     * genera el cuerpo visual de la tapa en el arreglo
-     */
-    @Override
-    protected void bodyBuilder(){
-        int posYBase = posicionY - PX_X_CM;
-        int posXBase = posicionX - ((PX_X_CM*getWidth())/2);
-        //base y cuerpo de la tapa
-        body.add(new Rectangle(posXBase, posYBase, PX_X_CM, PX_X_CM*getWidth(), color));
-    }
-    
-    /**
      * posiciona el centro de la tapa en el 
      * lugar deseado en el eje X.
      * 
@@ -46,8 +38,8 @@ public class Lid extends Element{
     public void posicionadorX(int posicionX){
         /*se le resta la mitad del ancho a la posicion 
          * ya que asi se posiciona donde se desea*/
-        posicionX = posicionX - ((PX_X_CM*getWidth())/2);
-        body.get(0).positionHorizontal(posicionX);
+        this.posicionX = posicionX;
+        body.get(0).posicionadorX(posicionX - ((PX_X_CM*width)/2));
     }
     
     /**
@@ -61,18 +53,48 @@ public class Lid extends Element{
     public void posicionadorY(int posicionY){
         /*actualiza la posicion de la cima y la base de la tapa y mueve el
            cuerpo*/
-        posicionY = posicionY - PX_X_CM;
-        top = posicionY;
-        base = posicionY;
-        body.get(0).positionVertical(posicionY);
+        this.posicionY = posicionY;
+        body.get(0).posicionadorY(posicionY - PX_X_CM);
     }
     
     /**
-     * dice que este objeto es de la clase Lid
+     * le dice al elemento dado que caera en una clase especifica para que sepa
+     * como debe reaccionar
      * 
-     * @return String Lid
+     * @param element es el elemento al que se le dara la orden
      */
-    public String item(){
-        return "Lid";
+    @Override
+    public void fallingElement(Element element){
+        if(element != null){
+            element.fallInLid(this);
+        }
+    }
+    
+    /**
+     * devuelve la informacion del objeto
+     * 
+     * @return un arreglo de String en el que la primera posicion es la clase
+     * del elemento y en la segunda posicion el numero del elemento
+     */
+    @Override
+    public String[] information(){
+        return new String[]{"Lid", String.valueOf(number)};
+    }
+    
+    /*=============================================================================
+       
+                                 metodos auxiliares
+       
+    ===============================================================================*/
+    
+    /**
+     * genera el cuerpo visual de la tapa en el arreglo
+     */
+    @Override
+    protected void bodyBuilder(){
+        int posYBase = posicionY - PX_X_CM;
+        int posXBase = posicionX - ((PX_X_CM*width)/2);
+        //base y cuerpo de la tapa
+        body.add(new Rectangle(posXBase, posYBase, PX_X_CM, PX_X_CM*width, color));
     }
 }

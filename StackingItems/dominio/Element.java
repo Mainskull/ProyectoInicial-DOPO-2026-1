@@ -1,5 +1,6 @@
 package dominio;
 
+import shape.*;
 import java.util.*;
 
 /**
@@ -11,17 +12,17 @@ import java.util.*;
 public abstract class Element{
     public static final int PX_X_CM = 30;
     
-    private int number;
-    private int height;
-    private int width;
+    protected int number;
+    protected int height;
+    protected int width;
     protected int posicionX;
     protected int posicionY;
-    protected int top;
-    protected int base;
     protected String color;
     
-    protected Element coverlet;    
-    protected ArrayList<Rectangle> body;
+    protected Element base;
+    protected Element coverlet;
+    protected Container container;
+    protected ArrayList<Figure> body;
     
     /**
      * genera un elemento
@@ -42,19 +43,19 @@ public abstract class Element{
         this.posicionY = posicionY;
         this.color = color;
         
-        top = posicionY - height*PX_X_CM;
-        base = posicionY - PX_X_CM;
-        
+        base = null;
         coverlet = null;
+        container = null;
         body = new ArrayList<>();
         
         bodyBuilder();
     }
     
-    /**
-     * genera el cuerpo visual del elemento
-     */
-    protected abstract void bodyBuilder();
+    /*=====================================================
+           
+                    metodos abstractos
+    
+    =======================================================*/
     
     /**
      * posiciona la mitad del elemento en la posicion que se de en el
@@ -64,7 +65,7 @@ public abstract class Element{
      * 
      * @param posicionX lugar deseado en el eje X para la ubicacion
      */
-    public abstract void posicionadorX(int posicionX);
+    public abstract void posicionadorX(int xPosition);
     
     /**
      * posiciona la parte inferior del elemento en la posicion que se de en el
@@ -74,21 +75,68 @@ public abstract class Element{
      * 
      * @param posicionY lugar deseado en el eje Y para la ubicacion
      */
-    public abstract void posicionadorY(int posicionY);
+    public abstract void posicionadorY(int yPosition);
     
     /**
-     * determina el tipo de clase del que es el elemento
+     * devuelve la informacion del objeto
      * 
-     * @return String con el nombre de la clase que es
+     * @return un arreglo de String en el que la primera posicion es la clase
+     * del elemento y en la segunda posicion el numero del elemento
      */
-    public abstract String item();
+    public abstract String[] information();
+    
+    /**
+     * le dice al elemento que un elemento caera encima de el y este elemento le dira en que va caer
+     * al otro elemento.
+     * 
+     * @param element elemento dejado caer en este
+     */
+    public abstract void fallingElement(Element element);
+    
+    /*=====================================================
+           
+                    metodos implementados
+    
+    =======================================================*/
+    /**
+     * determina si el contenedor puede contener un elemento
+     * 
+     * @param elemento que se desea saber si puede ser contenido por este contenedor
+     */
+    public boolean isInContainer(Container container){
+        boolean isInside = false;
+        Container currentContainer = getContainer();
+        while(currentContainer != null){
+            if(currentContainer.equals(container)){
+                isInside = true;
+            }
+            currentContainer = currentContainer.getContainer();
+        }
+        return isInside;
+    }
+    
+    /**
+     * determina si un elemento es igual a este
+     * 
+     * @param elemento que se va a comparar con este 
+     * 
+     * @return true en caso de que su informacion sea igual, false si es diferente
+     */
+    public boolean equals(Object obj){
+        boolean equals = false;
+        if(obj instanceof Element){
+            Element e = (Element) obj;
+            equals = Arrays.equals(e.information(), information());
+        }
+        return equals;
+    }
     
     /**
      * hace visible el cuerpo del elemento
      */
     public void makeVisible(){
-        for (Rectangle rect : body) {
-            rect.makeVisible();
+        for (Figure fig : body) {
+            fig.makeVisible();
         }  
     }
     
@@ -96,8 +144,8 @@ public abstract class Element{
      * hace invisible el cuerpo del elemento
      */
     public void makeInvisible(){
-        for (Rectangle rect : body) {
-            rect.makeInvisible();
+        for (Figure fig : body) {
+            fig.makeInvisible();
         }
     }
     
@@ -110,120 +158,135 @@ public abstract class Element{
         return coverlet != null;
     }
     
+    /*=====================================================
+           
+                    metodos auxiliares
+    
+    =======================================================*/
+    
     /**
-     * devuelve el elemento que se encuentra encima de este
-     * 
-     * @return elemento encima del actual
+     * genera el cuerpo visual del elemento
      */
-    public Element getCoverlet(){
-        return coverlet;
+    protected abstract void bodyBuilder();
+    
+    /**
+     * deja caer este elemento en la copa dada, se supone que el elemento no
+     * tiene informacion, como si estuviera recien creado, solo la info crucial
+     * sin interaccion con otros elementos
+     * 
+     * @param cup taza en la que se va a colocar el elemento
+     */
+    protected void fallInCup(Cup cup){
+        if(cup.canContentIt(this)){
+            cup.fallingInTopContent(this);
+        }
+        else{
+            cup.putAsCover(this);
+        }
     }
     
     /**
-     * hace que el elemento sea cubierto por otro elemento dado
+     * deja caer este elemento en la taza dada, se supone que el elemento no
+     * tiene informacion, como si estuviera recien creado, solo la info crucial
+     * sin interaccion con otros elementos
      * 
-     * @param elemento es el elemento que cubrira al actual
+     * @param lid tapa en la que se va a colocar el elemento
      */
-    public void setCoverlet(Element elemento){
-        coverlet = elemento;
+    protected void fallInLid(Lid lid){
+        lid.putAsCover(this);
     }
     
     /**
-     * hace que la cima de lo que tiene dentro de si el elemento actual sea
-     * un elemento dado
+     * coloca el elemento dado como cubierta de este y actualiza la informacion tanto al elemento dado como a este 
      * 
-     * por defecto como los elementos no contienen cosas por defecto no se
-     * hara nada
-     * 
-     * @param elemento elemento que se desea poner en la cima de lo contenido
-     * en este
+     * @param elemento que cubrira a este
      */
-    public void setTopContent(Element elemento){
-    
+    protected void putAsCover(Element element){
+        //este elemento se vuelve la base del elemento dado
+        element.setBase(this);
+        //se posiciona el elemento justo encima de este
+        element.posicionadorY(getPosYTop());
+        //ya que se posiciono como cubierta de este elemento su contenedor sera el mismo que el de este
+        Container containerForElement = getContainer();
+        element.setContainer(containerForElement);
+        /*si el contenedor es null significa que el elemento esta afuera de cualquier contenedor
+           pero si no se debe insertar al elemento dentro del contenido del contenedor en una posicion
+           por encima de la que se encuentra este*/
+        if(containerForElement != null){
+            containerForElement.insertElement(element, this);
+        }
+        
+        setCoverlet(element);
     }
     
-    /**
-     * determina si el elemento contiene algun elemento dentro de si
-     * 
-     * por defecto los elementos no contienen nada
-     * 
-     * @return true si contiene algo, false si no
-     */
-    public boolean containsSomething(){
-        return false;
-    }
+    /*====================================================
+       
+                       getters y setters
+       
+    ======================================================*/
     
     /**
-     * devuelve la ubicacion de la cima del elemento
-     * 
-     * @return la posicion en y de la parte superior del elemento en
-     * el eje y
+     *devuelve la posicion de la cima del elemento
+     *
+     *@return devuelve la posicionY de la cima del elemento
      */
     public int getPosYTop(){
-        return top;
+        return posicionY - height*PX_X_CM;
     }
     
     /**
-     * devuelve el numero que tiene asignado el elemento
+     * devuelve el numero asignado a este elemento
      * 
-     * @return numero del elemento
+     * @return el numero asignado a este elemento
      */
     public int getNumber(){
         return number;
     }
     
     /**
-     * devuelve la altura que tiene el elemento
+     * devuelve el contenerdor del elemento
      * 
-     * @return altura del elemento
+     * @return devuelve el contenedor actual en el que se encuentra 
+     * el elemento
      */
-    public int getHeight(){
-        return height;
+    public Container getContainer(){
+        return container;
     }
     
     /**
-     * devuelve la anchura que tiene el elemento
+     * devuelve la cubierta del elemento
      * 
-     * @return altura del elemento
+     * @return devuelve el elemento que esta encima cubriendo a este
      */
-    public int getWidth(){
-        return width;
+    public Element getCoverlet(){
+        return coverlet;
     }
     
     /**
-     * devuelve el elemento que se encuentra encima de cualquier otro 
-     * elemento que este contenido en este
+     * vuelve al elemento dado la base de este
      * 
-     * por defecto como los elementos no contienen nada no poseen
-     * ningun elemento para devolver
-     * 
-     * @return elemento en la cima dento del actual
+     * @param newBase es el elemento que se desea colocar como base de este
      */
-    public Element getTopContent(){
-        return null;
+    public void setBase(Element newBase){
+        base = newBase;
     }
     
     /**
-     * devuelve la ubicacion interna de la base del elemento
+     * vuelve el contenerdor del elemento, el dado.
      * 
-     * @return posicion de la parte superior de la base del elemento
+     * @param container contenedor que asignar al elemento
      */
-    public int getPosYBase(){
-        return base;
+    public void setContainer(Container newContainer){
+        container = newContainer;
     }
     
     /**
-     * Cambia el color del cuerpo del elemento
+     * vuelve al elemento dado la cubierta de este
      * 
-     * @param color que se desea, solo se permite:
-     * "red", "yellow", "blue", "green", "magenta" y "black"
+     * @param newCoverlet es el elemento que se desea colocar como cubierta de este
      */
-    public void changeColor(String color){
-        
-        for(Rectangle rect : body){
-            rect.changeColor(color);
-        }
-        
+    public void setCoverlet(Element newCoverlet){
+        coverlet = newCoverlet;
     }
 }
 

@@ -156,4 +156,33 @@ public abstract class Figure
         }
     }
     
+    //===============================================================
+    
+                                //extensiones
+    
+    //================================================================
+    
+    /**
+     * cambia la posicion en X a la deseada de la esquina superior derecha
+     * de la figura
+     * 
+     * @param posicionX posicion deseada en el eje x
+     */
+    public void posicionadorX(int posicionX){
+        erase();
+        xPosition = posicionX;
+        draw();
+    }
+    
+    /**
+     * cambia la posicion en X a la deseada de la esquina superior derecha
+     * de la figura
+     * 
+     * @param posicionX posicion deseada en el eje x
+     */
+    public void posicionadorY(int posicionY){
+        erase();
+        yPosition = posicionY;
+        draw();
+    }
 }
