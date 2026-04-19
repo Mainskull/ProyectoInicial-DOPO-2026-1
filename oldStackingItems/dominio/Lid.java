@@ -50,11 +50,11 @@ public class Lid extends Element{
      * inferior de la tapa en el eje Y
      */
     @Override
-    public void posicionadorY(int posicionY){
+    public void posicionadorY(int yPosition){
         /*actualiza la posicion de la cima y la base de la tapa y mueve el
            cuerpo*/
-        this.posicionY = posicionY;
-        body.get(0).posicionadorY(posicionY - PX_X_CM);
+        this.posicionY = yPosition;
+        body.get(0).posicionadorY(yPosition - PX_X_CM);
     }
     
     /**
@@ -78,7 +78,7 @@ public class Lid extends Element{
      */
     @Override
     public String[] information(){
-        return new String[]{"Lid", String.valueOf(number)};
+        return new String[]{"lid", String.valueOf(number)};
     }
     
     /*=============================================================================

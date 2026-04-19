@@ -109,7 +109,7 @@ public class Cup extends Element implements Container{
      */
     @Override
     public String[] information(){
-        return new String[]{"Cup", String.valueOf(number)};
+        return new String[]{"cup", String.valueOf(number)};
     }
     
     /**
@@ -223,62 +223,13 @@ public class Cup extends Element implements Container{
     }
     
     /**
-     * hace que el elemento se elimine de las referencias de todos los objetos que lo referencien a el y luego hace que todo lo que
-     * se afecte por su eliminacion se actualice. el elemento sigue existiendo pero se reinicia.
+     * hace que el elemento vuelva a su estado base, como si hubise sido creado
      * 
-     * para eliminarlo se debe eliminar todas las referencias hacia el, no solo las que maneja este elemento
-     * 
-     * @param limitFalling es la posicion en la que se pondra la cubierta de este elemento en caso
-     * de que tenga y no tenga un elemento en su base
      */
     @Override
-    public boolean eliminate(int limitFall){
-        //elementos con los que dejara de interactuar con el elemento
-        Element oldBase = getBase();
-        Element oldCoverlet = getCoverlet();
-        Container oldContainer = getContainer();
-        ArrayList<Element> oldContent = clearContent();
-        
-        //olvido de estos elementos
-        setBase(null);
-        setCoverlet(null);
-        setContainer(null);
-        
-        if(base != null){
-            base.setCoverlet(null);
-        }
-        if(coverlet != null){
-            coverlet.setBase(null);
-        }
-        if(container != null){
-            container.eliminateElement(this);
-        }
-        
-        for(Element e: oldContent){
-            if(oldBase != null){
-                oldBase.fallingElement(e);    
-            }
-            else{
-                e.posicionadorY(limitFall);
-                
-                oldBase = e;
-            }
-        }
-        
-        //colocar encima de la base lo que estaba encima de este elemento
-        
-        if(oldBase != null){
-            oldBase.fallingElement(oldCoverlet);    
-        }
-        else{
-            if(oldCoverlet != null){
-                oldCoverlet.posicionadorY(limitFall);
-                
-                oldCoverlet.fallingElement(oldCoverlet.getCoverlet());
-            }
-        }
-        
-        return true;
+    public void reset(){
+        super.reset();
+        content.clear();
     }
     
     /*=====================================================

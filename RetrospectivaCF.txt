@@ -1,0 +1,47 @@
+1.¿Cuáles fueron los mini-ciclos definidos? Justifíquenlos.
+
+-refactorizacion del paquete shapes: crear una clase abstracta figure que una todos los comportamientos y atributos comunes en una clase plantilla para mejorar la estructura el diseño y hacer un mejor uso de esta, ademas de separarla como un paquete aparte.
+
+-refactorizacion del ciclo 1: unir por medio de una clase abstracta Element todo lo que la torre nesecitase para administrar los objetos que estaquease, y utilizar el poliformismo para refactorizar los metodos y dar mayor extensibilidad al codigo.
+
+-refactorizacion del ciclo 2: usar lo planteado en el ciclo uno, para mejorar la usabilidad del ciclo 2.
+
+- implementacion de subclases de lid: se extiende la clase lid para crear feaful y crazy y aparte de darles un mini diseño diferente y sobreescribir lo esencial, unicamente se sobreescribe los metodos de como caen e interactuan con otros objetos para que definan su posicion y hacer lo que se requiere ademas de si pueden ser eliminados o no. 
+
+- implemantacion de subclase de cup: se  extiende la clase cup para crear hieracly y opener y aparte de darles un mini diseño diferente y sobreescribir lo esencial, unicamente se sobreescribe los metodos de como caen e interactuan con otros objetos para que definan su posicion y hacer lo que se requiere pueden ser eliminados o no.
+
+2. ¿Cuál es el estado actual del proyecto en términos de mini-ciclos? ¿por qué?
+
+- se logro diseñar un codigo extensible, ya que la idea y lo que se refactorizo del ciclo uno permitio dar pie a una mayor facilidad de extension y mayor resistencia a  diversos casos, sin embargo mucho de lo que se planteo para este proyecto no se logro dejar completamente hecho, sin embargo cumple los minimos requistos nesesarios, al funcionar como un simulador que estaquea y quita elementos y permite extender de manera facil, solo limitado por lo que se quiera hacer.
+
+esto ocurrio por el la inmesa cantidad de refactorizaciones que se plantearon, y buscar hacer que el codigo sirviera para caso muy generales, por lo cual impidio que apesar de dejar un codigo bien extensible, consumio mucho tiempo el solo dejar el codigo como se deseaba. 
+
+3. ¿Cuál fue el tiempo total invertido por cada uno de ustedes? (Horas/Hombre)
+
+- 156 horas se le dedico a este proyecto por cada persona.
+
+4. ¿Cuál consideran fue el mayor logro? ¿Por qué?
+
+- lograr un codigo que en esencia tiene los requisitos minimos de funcion y a su vez es completamente extensible y poliformico, dando pie a poder ser extendido facilmente.
+
+5. ¿Cuál consideran que fue el mayor problema técnico? ¿Qué hicieron para resolverlo?
+
+- El mayor problema tecnico ha sido problemas en la logica, ya que al intentar hacerlo para resistir casos muy generales, fue muy complejo desarrollarla.
+
+por medio de analizar casos, de apoyarno en el uso del poliformismo, interface y clases abstractas y el constante desarrollo de soluciones a los problemas que se hiban presentando.
+
+6. ¿Qué hicieron bien como equipo? ¿Qué se comprometen a hacer para mejorar los resultados?
+
+- como equipo fuimos bastante colaborativos, contribuimos lo mejor posible a la finalizacion del proyecto.
+
+nos comprometemos a plantear mejor lo que debemos desarrollar para hacer algo funcional, pero en un mejor tiempo.
+
+7. Considerando las prácticas XP incluidas en los laboratorios. ¿cuál fue la más útil? ¿por qué?
+
+- la refactorizacion a medida que hibamos avanzando, ya que no nos soluciono completamente lo del tiempo, pero nos dio un panorama general con el que trabajar para hacer un codigo solido y extensible
+
+8. ¿Qué referencias usaron? ¿Cuál fue la más útil? Incluyan citas con estándares adecuados.
+
+- Oracle Corporation. (2023). ArrayList (Java Platform SE 17 ). Oracle Help Center. Recuperado el 15 de febrero de 2026, de https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html
+ 
+- DeepSeek. (2025). DeepSeek (versión del 24 de marzo) [Modelo de lenguaje grande]. https://chat.deepseek.com/

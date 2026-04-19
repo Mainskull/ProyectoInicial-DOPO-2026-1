@@ -63,7 +63,7 @@ public class Tower{
     public void pushCup(int number){
         ok = false;
         
-        if (elementExists(new String[]{"Cup", String.valueOf(number)})) { 
+        if (elementExists(new String[]{"cup", String.valueOf(number)})) { 
             fail("Ya existe una taza con ese numero."); 
             return; 
         }
@@ -90,7 +90,7 @@ public class Tower{
     public void pushLid(int number){
         ok = false;
         
-        if (elementExists(new String[]{"Lid", String.valueOf(number)})) { 
+        if (elementExists(new String[]{"lid", String.valueOf(number)})) { 
             fail("Ya existe una tapa con ese numero."); 
             return; 
         }
@@ -104,6 +104,75 @@ public class Tower{
         Lid lid = new Lid(number, posicionTowerX, 0, color);
         
         putInTower(lid);
+        
+        ok = true;
+    }
+    
+    /**
+     * apila una copa en la torre, si no cabe en lo que haya debajo se acumula
+     * en la cima, si cabe en otra copa se acumula dentro.
+     * 
+     * @param number numero que se le asignara a la copa
+     */
+    public void pushCup(String type, int number){
+        ok = false;
+        
+        if (elementExists(new String[]{"cup", String.valueOf(number)})) { 
+            fail("Ya existe una taza con ese numero."); 
+            return; 
+        }
+        if (number <= 0) { 
+            fail("El numero debe ser mayor que 0."); 
+            return; 
+        }
+        
+        String color = pickColor(number);
+        
+        Cup cup = new Cup(number, posicionTowerX, 0, color);
+        
+        putInTower(cup);
+        
+        ok = true;
+    }
+    
+    /**
+     * apila una tapa en la torre, si no cabe en lo que haya debajo se acumula
+     * en la cima, si cabe en otra copa se acumula dentro.
+     * 
+     * @param number numero que se le asignara a la tapa
+     */
+    public void pushLid(String type, int number){
+        ok = false;
+        
+        if (elementExists(new String[]{"lid", String.valueOf(number)})) { 
+            fail("Ya existe una tapa con ese numero."); 
+            return; 
+        }
+        if (number <= 0) { 
+            fail("El numero debe ser mayor que 0."); 
+            return; 
+        }
+        
+        String color = pickColor(number);
+        
+        
+        if(type.equals("normal")){
+            Lid element = new Lid(number, posicionTowerX, 0, color);
+            putInTower(element);
+        }
+        else if(type.equals("fearful")){
+            Fearful element= new Fearful(number, posicionTowerX, 0, color);
+            putInTower(element);
+        }
+        else if(type.equals("crazy")){
+            Crazy element = new Crazy(number, posicionTowerX, 0, color);
+            putInTower(element);
+        }
+        else{
+            fail("el tipo ingresado no existe"); 
+            return; 
+        }
+        
         
         ok = true;
     }
@@ -123,7 +192,7 @@ public class Tower{
         saber si esta el elemento si no se encuentra se captura la excepcion que mande y se
         envia un mensaje a pantalla de que la taza no existe*/
         try{
-             indxElementEliminate = findIndxElement(new String[]{"Cup", String.valueOf(number)});
+             indxElementEliminate = findIndxElement(new String[]{"cup", String.valueOf(number)});
         }
         catch(StackingItemsException e){
             fail("no existe ninguna taza con ese numero asignado");
@@ -141,13 +210,13 @@ public class Tower{
            se le envia como parametro la posicion de la base de la torre en caso de que 
            los elementos
            que se actualicen neseciten saber hasta donde pueden caer*/
-        if(eliminateCup.eliminate(getPosYBase())){
+        if(eliminateCup.canEliminate()){
             elements.remove(indxElementEliminate);
         }
         
-        //se actualiza el currentTopElement en caso de que este por la eliminacion cambie
-        updateCurrentTopElement();
-
+        //actualizar la torre
+        
+        rebuild();
         
         //se vuelve visible los elementos si la torre es visible
         if(visible){
@@ -169,7 +238,7 @@ public class Tower{
         saber si esta el elemento si no se encuentra se captura la excepcion que mande y se
         envia un mensaje a pantalla de que la taza no existe*/
         try{
-             indxElementEliminate = findIndxElement(new String[]{"Lid", String.valueOf(number)});
+             indxElementEliminate = findIndxElement(new String[]{"lid", String.valueOf(number)});
         }
         catch(StackingItemsException e){
             fail("no existe ninguna tapa con ese numero asignado");
@@ -187,20 +256,65 @@ public class Tower{
            se le envia como parametro la posicion de la base de la torre en caso de que 
            los elementos
            que se actualicen neseciten saber hasta donde pueden caer*/
-        if(eliminateLid.eliminate(getPosYBase())){
+        if(eliminateLid.canEliminate()){
             elements.remove(indxElementEliminate);
         }
         
-        //se actualiza el currentTopElement en caso de que este por la eliminacion cambie
-        updateCurrentTopElement();
-        
-        //actualizar lista
+        //actualizar la torre
+        rebuild();
 
         
         //se vuelve visible los elementos si la torre es visible
         if(visible){
             makeElementsVisible();
         }
+    }
+    
+    /**
+     * elimina la ultima taza puesta en la torre
+     */
+    public void popCup() {
+        ok = false;
+        try{
+            int indx = findIndxTopElement("cup");
+            Element topElement = elements.get(indx);
+            int number = topElement.getNumber();
+            removeCup(number);
+            ok = true;
+        }
+        catch(StackingItemsException e){
+            fail("no hay ninguna taza en la torre");
+        }
+    }
+    
+    /**
+     * elimina la ultima tapa puesta en la torre
+     */
+    public void popLid() {
+       ok = false;
+       try{
+            int indx = findIndxTopElement("lid");
+            Element topElement = elements.get(indx);
+            int number = topElement.getNumber();
+            removeLid(number);
+            ok = true;
+       }
+        catch(StackingItemsException e){
+            fail("no hay ninguna tapa en la torre");
+       }
+    }
+    
+    public String[][] stackingItems(){
+        int cantElements = elements.size();
+        String[][] result = new String[cantElements][2];
+        
+        int indx = 0;
+        for(Element e: elements){
+            result[indx] = e.information();
+            indx ++;
+        }
+        
+        return result;
     }
     
     /**
@@ -237,6 +351,34 @@ public class Tower{
         
         visible = false;
         ok = true;
+    }
+    
+    /**
+     * retorna la altura actual que posee la torre en estos momentos desde su base
+     * hasta el elemento actual en la cima
+     * 
+     * @return altura actual de la torre
+     */
+    public int height(){
+        ok = false;
+    
+        if (currentTopElement == null) {
+            ok =true;
+            return 0;
+        }
+    
+        int baseTower = getPosYBase();
+        int topStack = currentTopElement.getPosYTop();
+        
+        ok = true;
+        return (baseTower - topStack) / PX_X_CM;
+    }
+    
+    /**
+     * determina si la ultima operacion se completo exitosamente
+     */
+    public boolean ok(){
+        return ok;
     }
     
     /*=============================================================================
@@ -307,6 +449,12 @@ public class Tower{
         return exists;
     }
     
+    /**
+     * encuentra la posicion del elemento que posea la informacion dada
+     * 
+     * @param arreglo con el tipo y el numero asignados al elemento
+     * @return entero que dice la posicion en la cual esta el elemento
+     */
     private int findIndxElement(String [] info) throws StackingItemsException{
         int indx = 0;
         
@@ -324,6 +472,30 @@ public class Tower{
         
         return indx;
         
+    }
+    
+    /**
+     * encuentra la posicion del elemento del mas reciente pues del tipo que se diga
+     * 
+     * @param type nombre del tipo del elemento que se busca
+     * @return numero del elemento que del tipo dado mas recientemente puesto
+     */
+    private int findIndxTopElement(String type) throws StackingItemsException{
+        int indx = 0;
+        
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            String[] infoE = elements.get(i).information();
+            if(infoE[0].equals(type)){
+                break;
+            }
+            indx += 1;
+        }
+        
+        if(indx == elements.size()){
+            throw new StackingItemsException(StackingItemsException.ELEMENT_NOT_fOUND);
+        }
+        
+        return indx;
     }
     
     /**
@@ -366,13 +538,41 @@ public class Tower{
             element.setBase(null);
         }
         
-        elements.add(element);
+        addElementToElements(element);
         updateCurrentTopElement();
         
         if(visible){
             element.makeVisible();
         }
         
+    }
+    
+    /**
+     * añade el elemento en la posicion correcta que le corresponde en la lista de elementos
+     * 
+     * @param element elemento a posicionar en la lista
+     */
+    private void addElementToElements(Element element){
+        int indx = 1;
+        Element currentBase = element.getBase();
+        
+        for(Element e: elements){
+            
+            if(e.equals(currentBase)){
+                break;
+            }
+    
+            indx++;
+        }
+        
+        if(elements != null){
+            if(0 < indx && indx< elements.size()){
+                elements.add(indx, element);
+            }
+            else{
+                elements.add(element);
+            }
+        }
     }
     
     /**
@@ -391,6 +591,23 @@ public class Tower{
         }
         
         setCurrentTopElement(higherElement);
+    }
+    
+    /**
+     * coge la lista de elementos como esta actualmente, reinicia cada elemento y vuelve a colocarlos en el orden en el que se encuentran en la
+     * lista elements
+     */
+    private void rebuild(){
+        ArrayList<Element> copyElements = new ArrayList(elements);
+        
+        elements.clear();
+        setCurrentTopElement(null);
+        
+        for(Element e: copyElements){
+            e.reset();
+            putInTower(e);
+        }
+        
     }
     
     /**

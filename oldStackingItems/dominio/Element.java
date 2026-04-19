@@ -18,6 +18,7 @@ public abstract class Element{
     protected int posicionX;
     protected int posicionY;
     protected String color;
+    protected boolean eliminate;
     
     protected Element base;
     protected Element coverlet;
@@ -42,6 +43,7 @@ public abstract class Element{
         this.posicionX = posicionX;
         this.posicionY = posicionY;
         this.color = color;
+        this.eliminate = false;
         
         base = null;
         coverlet = null;
@@ -98,6 +100,7 @@ public abstract class Element{
                     metodos implementados
     
     =======================================================*/
+    
     /**
      * determina si el contenedor puede contener un elemento
      * 
@@ -116,52 +119,13 @@ public abstract class Element{
     }
     
     /**
-     * hace que el elemento se elimine de las referencias de todos los objetos que lo referencien a el y luego hace que todo lo que
-     * se afecte por su eliminacion se actualice. el elemento sigue existiendo pero se reinicia.
+     * hace que el elemento vuelva a su estado base, como si hubise sido creado
      * 
-     * para eliminarlo se debe eliminar todas las referencias hacia el, no solo las que maneja este elemento
-     * 
-     * @param limitFalling es la posicion en la que se pondra la cubierta de este elemento en caso
-     * de que tenga y no tenga un elemento en su base
-     * 
-     * @return true si fue posible eliminarlo, false en caso contrario
      */
-    public boolean eliminate(int limitFall){
-        //elementos con los que dejara de interactuar el elemento
-        Element oldBase = getBase();
-        Element oldCoverlet = getCoverlet();
-        Container oldContainer = getContainer();
-        
-        //olvido de estos elementos
-        setBase(null);
+    public void reset(){
         setCoverlet(null);
         setContainer(null);
-        
-        if(base != null){
-            base.setCoverlet(null);
-        }
-        if(coverlet != null){
-            coverlet.setBase(null);
-        }
-        if(container != null){
-            container.eliminateElement(this);
-        }
-        
-
-        //colocar encima de la base lo que estaba encima de este elemento
-        
-        if(oldBase != null){
-            oldBase.fallingElement(oldCoverlet);    
-        }
-        else{
-            if(oldCoverlet != null){
-                oldCoverlet.posicionadorY(limitFall);
-                
-                oldCoverlet.fallingElement(oldCoverlet.getCoverlet());
-            }
-        }
-        
-        return true;
+        setBase(null);
     }
     
     /**
@@ -173,9 +137,11 @@ public abstract class Element{
      */
     public boolean equals(Object obj){
         boolean equals = false;
-        if(obj instanceof Element){
-            Element e = (Element) obj;
-            equals = Arrays.equals(e.information(), information());
+        if (obj != null){
+            if(obj instanceof Element){
+                Element e = (Element) obj;
+                equals = Arrays.equals(e.information(), information());
+            }
         }
         return equals;
     }
@@ -205,6 +171,29 @@ public abstract class Element{
      */
     public boolean isCovered(){
         return coverlet != null;
+    }
+    
+    /**
+     * hace que el elemento se registre como eliminado
+     * 
+     * @return true si fue eliminado, false si no
+     */
+    public void eliminate(){
+        eliminate = true;
+    }
+    
+    /**
+     * sirve para saber si un elemento puede ser eliminado
+     */
+    public boolean canEliminate(){
+        return true;    
+    }
+    
+    /**
+     * dice si el elemento fue eliminado
+     */
+    public boolean isDeleted(){
+        return eliminate;
     }
     
     /*=====================================================
