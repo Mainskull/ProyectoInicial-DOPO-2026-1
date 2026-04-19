@@ -116,6 +116,55 @@ public abstract class Element{
     }
     
     /**
+     * hace que el elemento se elimine de las referencias de todos los objetos que lo referencien a el y luego hace que todo lo que
+     * se afecte por su eliminacion se actualice. el elemento sigue existiendo pero se reinicia.
+     * 
+     * para eliminarlo se debe eliminar todas las referencias hacia el, no solo las que maneja este elemento
+     * 
+     * @param limitFalling es la posicion en la que se pondra la cubierta de este elemento en caso
+     * de que tenga y no tenga un elemento en su base
+     * 
+     * @return true si fue posible eliminarlo, false en caso contrario
+     */
+    public boolean eliminate(int limitFall){
+        //elementos con los que dejara de interactuar el elemento
+        Element oldBase = getBase();
+        Element oldCoverlet = getCoverlet();
+        Container oldContainer = getContainer();
+        
+        //olvido de estos elementos
+        setBase(null);
+        setCoverlet(null);
+        setContainer(null);
+        
+        if(base != null){
+            base.setCoverlet(null);
+        }
+        if(coverlet != null){
+            coverlet.setBase(null);
+        }
+        if(container != null){
+            container.eliminateElement(this);
+        }
+        
+
+        //colocar encima de la base lo que estaba encima de este elemento
+        
+        if(oldBase != null){
+            oldBase.fallingElement(oldCoverlet);    
+        }
+        else{
+            if(oldCoverlet != null){
+                oldCoverlet.posicionadorY(limitFall);
+                
+                oldCoverlet.fallingElement(oldCoverlet.getCoverlet());
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
      * determina si un elemento es igual a este
      * 
      * @param elemento que se va a comparar con este 
@@ -170,18 +219,39 @@ public abstract class Element{
     protected abstract void bodyBuilder();
     
     /**
-     * deja caer este elemento en la copa dada, se supone que el elemento no
-     * tiene informacion, como si estuviera recien creado, solo la info crucial
-     * sin interaccion con otros elementos
+     * deja caer este elemento en la taza dada si tiene una cubierta se dejara caer en la cubierta, 
+     * si no se vera si puede caer dentro de esta, si no se vera si puede cubrirla sin tener problemas 
+     * con los contenedores que contienen directa o indirectamente a la copa, si hay algun problema se colocara
+     * este elemento en el primer contenedor con el que se tenga un problema.
      * 
      * @param cup taza en la que se va a colocar el elemento
      */
     protected void fallInCup(Cup cup){
-        if(cup.canContentIt(this)){
-            cup.fallingInTopContent(this);
-        }
-        else{
-            cup.putAsCover(this);
+        if(cup.isCovered()){
+            cup.getCoverlet().fallingElement(this);
+        }else{
+           if(cup.canContentIt(this)){
+                cup.fallingInTopContent(this);
+            }
+            else{
+                Container currentContainer = cup.getContainer();
+            
+                while(currentContainer != null){
+                    if(!currentContainer.canContentIt(this)){
+                        break;
+                    }
+                    currentContainer = currentContainer.getContainer();
+                }
+                
+                if(currentContainer != null){
+                    currentContainer.fallingInContainer(this);
+                }
+                else{
+                    cup.putAsCover(this);
+                    Element tempCoverlet = getCoverlet();
+                    this.fallingElement(tempCoverlet);
+                }
+            }
         }
     }
     
@@ -193,7 +263,44 @@ public abstract class Element{
      * @param lid tapa en la que se va a colocar el elemento
      */
     protected void fallInLid(Lid lid){
-        lid.putAsCover(this);
+        if(lid.isCovered()){
+            lid.getCoverlet().fallingElement(this);
+        }else{
+            Container currentContainer = lid.getContainer();
+            
+            while(currentContainer != null){
+                if(!currentContainer.canContentIt(this)){
+                    break;
+                }
+                currentContainer = currentContainer.getContainer();
+            }
+            
+            if(currentContainer != null){
+                currentContainer.fallingInContainer(this);
+            }
+            else{
+                lid.putAsCover(this);
+                Element tempCoverlet = getCoverlet();
+                this.fallingElement(tempCoverlet);
+            }
+        
+        }
+    }
+    
+    /**
+     * prepara al elemento para caer, actualizando la informacion de este elemento
+     * ademas de actualizar a los elementos que tengan que ver con el para que no haya 
+     * inconsistencias en el proceso de caida
+     * 
+     */
+    protected void prepareFalling(){
+        if(container != null){
+            container.eliminateElement(this);
+        }
+        if(base != null){
+            base.setCoverlet(null);
+            setBase(null);
+        }
     }
     
     /**
@@ -244,6 +351,32 @@ public abstract class Element{
     }
     
     /**
+     * devuelve la posicionX que tiene este elemento
+     * 
+     * @return numero que dice la posicion en del centro del elemento en el eje x
+     */
+    public int getPosicionX(){
+        return posicionX;
+    }
+    
+    /**
+     * devuelve la posicionY que tiene este elemento
+     * 
+     * @return numero que dice la posicion en pantalla de la parte inferior del elemento
+     * en el eje y
+     */
+    public int getPosicionY(){
+        return posicionY;
+    }
+    
+    /**
+     * devuelve el elemento en la base en el que se encuentra este elemento
+     */
+    public Element getBase(){
+        return base;
+    }
+    
+    /**
      * devuelve el contenerdor del elemento
      * 
      * @return devuelve el contenedor actual en el que se encuentra 
@@ -260,6 +393,17 @@ public abstract class Element{
      */
     public Element getCoverlet(){
         return coverlet;
+    }
+    
+    /**
+     * devuelve el elemento que se encuentra encima de cualquier otro 
+     * elemento que este contenido en esta copa
+     * 
+     * @return elemento en la cima dentro del actual, en caso de que no tengo elementos retorna null
+     */
+    public Element getTopContent(){
+        //un elemento en si, no contiene nada por lo que no posee un topContent
+        return null;
     }
     
     /**

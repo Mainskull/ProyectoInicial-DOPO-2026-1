@@ -45,7 +45,6 @@ public class Cup extends Element implements Container{
      */
     @Override
     public void posicionadorX(int xPosition){
-        this.posicionX = xPosition;
         
         /*posiciona la pared izquierda en su ubicacion moviendola 
          * junto al extremo izquiedo de la base*/
@@ -63,8 +62,12 @@ public class Cup extends Element implements Container{
         int posicionX2 = xPosition + ((PX_X_CM*width)/2 -PX_X_CM);
         body.get(1).posicionadorX(posicionX2);
         
+        int dPositionX = xPosition - this.posicionX;
+        
+        this.posicionX = xPosition;
+        
         for(Element e: content){
-            e.posicionadorX(xPosition);
+            e.posicionadorX(e.getPosicionX() - dPositionX);
         }
         
     }
@@ -78,7 +81,6 @@ public class Cup extends Element implements Container{
      */
     @Override
     public void posicionadorY(int yPosition){        
-        this.posicionY = yPosition;
         
         /*posciona las paredes encima de la base y actualiza el top*/
         int posicionYP = yPosition - PX_X_CM*height;
@@ -90,8 +92,12 @@ public class Cup extends Element implements Container{
         int posicionYB = yPosition - PX_X_CM;
         body.get(2).posicionadorY(posicionYB);
         
+        int dPositionY = yPosition - this.posicionY;
+        
+        this.posicionY = yPosition;
+        
         for(Element e: content){
-            e.posicionadorY(yPosition);
+            e.posicionadorY(e.getPosicionY() + dPositionY);
         }
     }
     
@@ -113,8 +119,166 @@ public class Cup extends Element implements Container{
      */
     public void fallingElement(Element element){
         if(element != null){
+            element.prepareFalling();
             element.fallInCup(this);
         }
+    }
+    
+    /**
+     * deja caer este elemento en la taza dada si tiene una cubierta se dejara caer en la cubierta, 
+     * si no se vera si puede caer dentro de esta, si no se vera si puede cubrirla sin tener problemas 
+     * con los contenedores que contienen directa o indirectamente a la copa, si hay algun problema se colocara
+     * este elemento en el primer contenedor con el que se tenga un problema.
+     * si cabe en todo contenedor simplemente se colocara este elemento cubriendo la taza
+     * 
+     * @param cup taza en la que se va a colocar el elemento
+     */
+    @Override
+    public void fallInCup(Cup cup){
+        if(cup.isCovered()){
+            cup.getCoverlet().fallingElement(this);
+        }else{
+           if(cup.canContentIt(this)){
+                cup.fallingInTopContent(this);
+            }
+            else{
+                Container currentContainer = cup.getContainer();
+            
+                while(currentContainer != null){
+                    if(!currentContainer.canContentIt(this)){
+                        break;
+                    }
+                    currentContainer = currentContainer.getContainer();
+                }
+                
+                if(currentContainer != null){
+                    currentContainer.fallingInContainer(this);
+                }
+                else{
+                    cup.putAsCover(this);
+                    Element tempCoverlet = getCoverlet();
+                    setCoverlet(null);
+                    /*la copa aparte de caer como un elemento, debe decirle a su contenido que caiga con el
+                    ya que puede haber colision entre un elemento contenido y uno externo con algun elemento externo
+                    cuando su contenido caiga*/
+                    ArrayList<Element> tempContent = clearContent();
+    
+                    /*cada elemento que estaba contenido caera en esta copa y redeterminara su posicion para saber si puede seguir*/
+                    for(Element e: tempContent){
+                        this.fallingElement(e);
+                    }
+
+                    this.fallingElement(tempCoverlet);
+                }
+            }
+        }
+    }
+    
+    /**
+     * deja caer este elemento en la tapaa dada si tiene una cubierta se dejara caer en la cubierta, 
+     * si no se vera si puede cubrirla sin tener problemas 
+     * con los contenedores que contienen directa o indirectamente a la tapa, 
+     * si hay algun problema se colocara
+     * este elemento en el primer contenedor con el que se tenga un problema.
+     * si cabe en todo contenedor simplemente se colocara este elemento cubriendo la tapa
+     * 
+     * @param lid tapa en la que se va a colocar el elemento
+     */
+    @Override
+    public void fallInLid(Lid lid){
+        if(lid.isCovered()){
+            lid.getCoverlet().fallingElement(this);
+        }else{
+           
+            Container currentContainer = lid.getContainer();
+        
+            while(currentContainer != null){
+                if(!currentContainer.canContentIt(this)){
+                    break;
+                }
+                currentContainer = currentContainer.getContainer();
+            }
+            
+            if(currentContainer != null){
+                currentContainer.fallingInContainer(this);
+            }
+            else{
+                lid.putAsCover(this);
+                Element tempCoverlet = getCoverlet();
+                setCoverlet(null);
+                /*la copa aparte de caer como un elemento, debe decirle a su contenido que caiga con el
+                ya que puede haber colision entre un elemento contenido y uno externo con algun elemento externo
+                cuando su contenido caiga*/
+                ArrayList<Element> tempContent = clearContent();
+
+                /*cada elemento que estaba contenido caera en esta copa y redeterminara su posicion para saber si puede seguir*/
+                for(Element e: tempContent){
+                    this.fallingElement(e);
+                }
+
+                this.fallingElement(tempCoverlet);
+            }
+        
+        }
+    }
+    
+    /**
+     * hace que el elemento se elimine de las referencias de todos los objetos que lo referencien a el y luego hace que todo lo que
+     * se afecte por su eliminacion se actualice. el elemento sigue existiendo pero se reinicia.
+     * 
+     * para eliminarlo se debe eliminar todas las referencias hacia el, no solo las que maneja este elemento
+     * 
+     * @param limitFalling es la posicion en la que se pondra la cubierta de este elemento en caso
+     * de que tenga y no tenga un elemento en su base
+     */
+    @Override
+    public boolean eliminate(int limitFall){
+        //elementos con los que dejara de interactuar con el elemento
+        Element oldBase = getBase();
+        Element oldCoverlet = getCoverlet();
+        Container oldContainer = getContainer();
+        ArrayList<Element> oldContent = clearContent();
+        
+        //olvido de estos elementos
+        setBase(null);
+        setCoverlet(null);
+        setContainer(null);
+        
+        if(base != null){
+            base.setCoverlet(null);
+        }
+        if(coverlet != null){
+            coverlet.setBase(null);
+        }
+        if(container != null){
+            container.eliminateElement(this);
+        }
+        
+        for(Element e: oldContent){
+            if(oldBase != null){
+                oldBase.fallingElement(e);    
+            }
+            else{
+                e.posicionadorY(limitFall);
+                
+                oldBase = e;
+            }
+        }
+        
+        //colocar encima de la base lo que estaba encima de este elemento
+        
+        if(oldBase != null){
+            oldBase.fallingElement(oldCoverlet);    
+        }
+        else{
+            if(oldCoverlet != null){
+                oldCoverlet.posicionadorY(limitFall);
+                
+                oldCoverlet.fallingElement(oldCoverlet.getCoverlet());
+            }
+        }
+        
+        return true;
     }
     
     /*=====================================================
@@ -134,7 +298,7 @@ public class Cup extends Element implements Container{
     public boolean canContentIt(Element element){
         boolean canContent = false;
         
-        Element topContent = getTopContent();
+        Element topContent = getRealTopContent();
         
         int numberElement = element.getNumber();
         int numberThis = getNumber();
@@ -156,6 +320,22 @@ public class Cup extends Element implements Container{
         }
     
         return canContent;
+    }
+    
+    /**
+     * pone un elemento en el contenedor cayendo en el contenedor y puede cubrirlo, 
+     * cubrir lo que este encima de el o entrar en el.
+     * 
+     * @param element es el elemento que se deja caer en el contenedor
+     */
+    public void fallingInContainer(Element element){
+        Element coverlet = getCoverlet();
+        if(coverlet != null){
+            coverlet.fallingElement(element);
+        }
+        else{
+            fallingElement(element);
+        }
     }
     
     /**
@@ -195,11 +375,32 @@ public class Cup extends Element implements Container{
     }
     
     /**
-     * pone al elemento dado, en el elemento en la cima (topContent) de lo contenido en
-     * el contendor y lo añade al registro de las cosas que tiene contenidas este
-     * contenedor
+     * pone al elemento dado justo encima del indice anterior al dado y mueve todo el contenido que
+     * estuviera una posicion arriba
      * 
      * @param element elemento que se desea colocar en el contenido de este contenedor
+     */
+    public void insertElement(Element element, int indx){
+        if(content != null){
+            if(indx < content.size()){
+                content.add(indx, element);
+            }
+            else{
+                content.add(element);
+            }
+        }
+    }
+    
+    /**
+     * pone al elemento dado justo encima del elemento base dado contenido en este
+     * contenedor y si base tiene elementos encima los dezplaza una posicion hacia arriba.
+     * 
+     * si el elemento base no se encuentra contenido en este contenedor lo deja en la cima del
+     * contenido
+     * 
+     * @param element elemento a colocar en el contenedor
+     * @param base elemento que define en que posicion del contenido se colocara.
+     * 
      */
     public void insertElement(Element element, Element base){
         int indx = 1;
@@ -222,6 +423,52 @@ public class Cup extends Element implements Container{
     }
     
     /**
+     * elimina el elemento dado del contenido del contenedor si no esta en el contenido, no hace nada
+     * 
+     * @param element elemento a eliminar
+     */
+    public void eliminateElement(Element element){
+        content.remove(element);
+    }
+    
+    /**
+     * saca el contenido del contenedor haciendo que ya no lo referencien a el si no 
+     * a en donde este contenido este contenedor y luego vacia su registro de elementos
+     * contenidos.
+     * 
+     * no inserta los elementos contenidos en este contenedor en el otro, se debe hacer
+     * que los elementos vuelvan a determinar su posicion
+     * 
+     * @return elementos que estaban contenidos en este contenedor
+     */
+    public ArrayList<Element> clearContent(){
+        //guarda los elementos que antes estaban en este contenedor para devolverlos
+        ArrayList<Element> elementsContent = new ArrayList();
+        
+        /*los elementos ahora referencian al contenedor de este contendor
+           para de cierta forma determinar donde se encuentran en este momento al no estar
+           contenidos en este contendor,tambien se desacoplaran de entres si ya que que sin
+           este contenedor teoricamente no estan stackeados hasta caer nuevamente*/
+        for(Element e: content){
+            e.setBase(null);
+            e.setContainer(getContainer());
+            e.setCoverlet(null);
+            elementsContent.add(e);
+        }
+        
+        /*el elemento en la base de lo contenido ahora referenciara a null como si estuviera
+           suspendido mientras se determina su posicion*/
+        Element currentBase = getBaseContent();
+        if(currentBase != null){
+            currentBase.setBase(null);
+        }
+        /*se limpiea el registro de lo contenido en este contenedor*/
+        content.clear();
+        
+        return elementsContent;
+    }
+    
+    /**
      * devuelve el elemento que se encuentra encima de cualquier otro 
      * elemento que este contenido en esta copa
      * 
@@ -237,11 +484,63 @@ public class Cup extends Element implements Container{
     }
     
     /**
+     * devuelve el verdadero elemento que se encuentra en la cima de todo lo contenido
+     * en este, siendo ese el elemento que mas sobre sale de todo lo contenido en esta copa
+     * 
+     * @return devuelve el elemento que esta mas alto dentro de lo contenido en este
+     */
+    @Override
+    public Element getRealTopContent(){
+        Element realTopContent = getTopContent();
+        
+        Element currentTopContent = null;
+        int posYCurrent;
+        int posYrealTop;
+        
+        Element currentElementContainer = getTopContent();
+        if(currentElementContainer != null){
+            currentTopContent = currentElementContainer.getTopContent();
+        }
+        
+        while(currentElementContainer!= null && currentTopContent != null){
+            
+            posYCurrent = currentTopContent.getPosYTop();
+            
+            posYrealTop = realTopContent.getPosYTop();
+            
+            if(posYCurrent < posYrealTop){
+                realTopContent = currentTopContent;
+            }
+            
+            currentElementContainer = currentTopContent;
+            currentTopContent = currentElementContainer.getTopContent();
+        }
+        
+        return realTopContent;
+    }
+    
+    /**
+     * devuelve el elemento que se encuentra encima de cualquier otro 
+     * elemento que este contenido en esta copa
+     * 
+     * @return elemento en la cima dentro del actual, en caso de que no tengo elementos retorna null
+     */
+    @Override
+    public Element getBaseContent(){
+        Element topContent = null;
+        if(content.size()!= 0){
+            topContent = content.get(0);
+        }
+        return topContent ;
+    }
+    
+    /**
      * devuelve la posicion del eje Y en la que se encuentra la base interior del
      * contenedor
      * 
      * @return posicion Y de la base interior
      */
+    @Override
     public int getPosYBase(){
         return posicionY - PX_X_CM;
     }

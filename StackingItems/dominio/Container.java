@@ -1,4 +1,5 @@
 package dominio;
+import java.util.ArrayList;
 
 
 /**
@@ -16,6 +17,14 @@ public interface Container{
      * @param elemento que se desea saber si puede ser contenido por este contenedor
      */
     boolean canContentIt(Element element);
+    
+    /**
+     * pone un elemento en el contenedor cayendo en el contenedor y puede cubrirlo, 
+     * cubrir lo que este encima de el o entrar en el.
+     * 
+     * @param element es el elemento que se deja caer en el contenedor
+     */
+    void fallingInContainer(Element element);
     
     /**
      * le dice al elemento dado que se deje caer en el topContent de de este contenedor
@@ -46,12 +55,47 @@ public interface Container{
     void insertElement(Element element, Element base);
     
     /**
+     * elimina el elemento dado del contenido del contenedor si no esta en el contenido, no hace nada
+     * 
+     * @param element elemento a eliminar
+     */
+    void eliminateElement(Element element);
+    
+    /**
+     * saca el contenido del contenedor haciendo que ya no lo referencien a el si no 
+     * a en donde este contenido este contenedor y luego vacia su registro de elementos
+     * contenidos.
+     * 
+     * no inserta los elementos contenidos en este contenedor en el otro, se debe hacer
+     * que los elementos vuelvan a determinar su posicion
+     * 
+     * @return elementos que estaban contenidos en este contenedor
+     */
+    public ArrayList<Element> clearContent();
+    
+    /**
      * devuelve el elemento que esta en la cima de los elementos contenidos en este
      * contenedor
      * 
      * @return devuelve el elemento en la cima de lo contenido
      */
     Element getTopContent();
+    
+    /**
+     * devuelve el verdadero elemento que se encuentra en la cima de todo lo contenido
+     * en este, siendo ese el elemento que mas sobre sale de todo lo contenido en esta copa
+     * 
+     * @return devuelve el elemento que esta mas alto dentro de lo contenido en este
+     */
+    Element getRealTopContent();
+    
+    /**
+     * devuelve el elemento que esta en la base de los elementos contenidos en este
+     * contenedor
+     * 
+     * @return devuelve el elemento en la base de lo contenido
+     */
+    Element getBaseContent();
     
     /**
      * devuelve el contenedor en el que se puede encontrar este

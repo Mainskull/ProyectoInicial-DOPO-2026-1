@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
  */
 public class Tower{
     
-    private static final int PX_X_CM = 20; //pixeles por centimetro
+    public static final int PX_X_CM = 20; //pixeles por centimetro
     private static final int CANVAS_W = 600; //anchura del canvas
     private static final int CANVAS_H = 600; //altura del canvas
     
@@ -106,6 +106,101 @@ public class Tower{
         putInTower(lid);
         
         ok = true;
+    }
+    
+    /**
+     * elimina la taza con el numero asignado si esta puesta en la torre
+     * 
+     * @param number es el mumero de la taza que se desea eliminar
+     */
+    public void removeCup(int number) {
+        ok = false;
+        
+        
+        int indxElementEliminate = 0;
+        
+        /*se busca el indice del elemento que se desea eliminar en el ArrayList para obtener y 
+        saber si esta el elemento si no se encuentra se captura la excepcion que mande y se
+        envia un mensaje a pantalla de que la taza no existe*/
+        try{
+             indxElementEliminate = findIndxElement(new String[]{"Cup", String.valueOf(number)});
+        }
+        catch(StackingItemsException e){
+            fail("no existe ninguna taza con ese numero asignado");
+            return;
+        }
+        //se hace invisible a los objetos mientras se hacen los cambios
+        makeElementsInvisible();
+        
+        //se obtiene la tapa a eliminar
+        Element eliminateCup = elements.get(indxElementEliminate);
+        
+        /*se le dice a la taza que se elimine y esta se encargara de avisarle a los
+           elementos con los que tenga alguna relacion para que se actualicen tambien
+            
+           se le envia como parametro la posicion de la base de la torre en caso de que 
+           los elementos
+           que se actualicen neseciten saber hasta donde pueden caer*/
+        if(eliminateCup.eliminate(getPosYBase())){
+            elements.remove(indxElementEliminate);
+        }
+        
+        //se actualiza el currentTopElement en caso de que este por la eliminacion cambie
+        updateCurrentTopElement();
+
+        
+        //se vuelve visible los elementos si la torre es visible
+        if(visible){
+            makeElementsVisible();
+        }
+    }
+    
+    /**
+     * elimina la tapa con el numero asignado si esta puesta en la torre
+     * 
+     * @param number es el mumero de la tapa que se desea eliminar
+     */
+    public void removeLid(int number) {
+        ok = false;
+        
+        int indxElementEliminate = 0;
+        
+        /*se busca el indice del elemento que se desea eliminar en el ArrayList para obtener y 
+        saber si esta el elemento si no se encuentra se captura la excepcion que mande y se
+        envia un mensaje a pantalla de que la taza no existe*/
+        try{
+             indxElementEliminate = findIndxElement(new String[]{"Lid", String.valueOf(number)});
+        }
+        catch(StackingItemsException e){
+            fail("no existe ninguna tapa con ese numero asignado");
+            return;
+        }
+        //se hace invisible a los objetos mientras se hacen los cambios
+        makeElementsInvisible();
+        
+        //se obtiene la tapa a eliminar
+        Element eliminateLid = elements.get(indxElementEliminate);
+        
+        /*se le dice a la tapa que se elimine y esta se encargara de avisarle a los
+           elementos con los que tenga alguna relacion para que se actualicen tambien
+            
+           se le envia como parametro la posicion de la base de la torre en caso de que 
+           los elementos
+           que se actualicen neseciten saber hasta donde pueden caer*/
+        if(eliminateLid.eliminate(getPosYBase())){
+            elements.remove(indxElementEliminate);
+        }
+        
+        //se actualiza el currentTopElement en caso de que este por la eliminacion cambie
+        updateCurrentTopElement();
+        
+        //actualizar lista
+
+        
+        //se vuelve visible los elementos si la torre es visible
+        if(visible){
+            makeElementsVisible();
+        }
     }
     
     /**
@@ -299,12 +394,21 @@ public class Tower{
     }
     
     /**
-     * vuelve al elemento dado, el elemento actual en la cima de la torre
-     * 
-     * @param element es el elemento que se volvera el elemento en la cima de la torre
+     * hace visible la estructura grafica de la torre
      */
-    private void setCurrentTopElement(Element element){
-        currentTopElement = element;
+    private void makeElementsVisible(){
+        for(Element e: elements){
+            e.makeVisible();
+        }
+    }
+    
+    /**
+     * hace invisible la estructura grafica de la torre
+     */
+    private void makeElementsInvisible(){
+        for(Element e: elements){
+            e.makeInvisible();
+        }
     }
     
     /**
@@ -315,4 +419,24 @@ public class Tower{
     private int getPosYBase(){
         return posicionTowerY + (height*PX_X_CM)/2;
     }
+    
+    /**
+     * vuelve el elemento que es la cima de la torre actualmente
+     * 
+     * @return elemento actual que es la cima de la torre.
+     */
+    private Element getCurrentTopElement(){
+        return currentTopElement;
+    }
+    
+    /**
+     * vuelve al elemento dado, el elemento actual en la cima de la torre
+     * 
+     * @param element es el elemento que se volvera el elemento en la cima de la torre
+     */
+    private void setCurrentTopElement(Element element){
+        currentTopElement = element;
+    }
+    
+    
 }
