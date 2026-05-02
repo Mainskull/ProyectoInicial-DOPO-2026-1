@@ -1,0 +1,46 @@
+RETROSPECTIVA
+PRIMER CICLO
+
+
+1.¿Cuáles fueron los mini-ciclos definidos? Justifíquenlos.
+
+- Extension de la clase Rectangle: se extiende lo necesario de la clase rectangle para facilitar la construcción de los elementos principales.
+- Creacion de la clase Lid: Se comienza la construcción básica de la clase Lid y sus funcionalidades utilizando la clase Rectangle como base visual y ligeramente funcional
+- Creacion de la clase Cup: se comienza la construccion mas compleja de la clase Cup, sus funcionalidades basicas utilizando Rectangle como base visual y utilizando algunas funcionalidades
+-Creación de la torre: esto es lo primordial ya que todo método se basa en utilizar lo generado para poder ejecutarse y ser probado
+-Consulta de información y visibilidad: esto nos permite poder visualizar y corroborar que la información se esté guardando correctamente, además de que a nivel visual esta información termina siendo representada y podremos ver si hace sentido con lo que consultamos y ver.
+- Manejo de elementos: teniendo estos métodos verificadores, comenzamos el desarrollo de los métodos que manipulan a las demás clases para comenzar a darle forma y funcionalidad al simulador.
+- Reorganizacion de la torre: con las funciones básicas de manipulación tenemos una base para poder desarrollar funcionalidades más complejas, que aporten valor al simulador.
+- Salir del simulador: después de verificar, probar y utilizar lo que puede ofrecer el simulador, concluimos con un método de salida, que permita dejar todo igual que como se comenzó.
+
+2. ¿Cuál es el estado actual del proyecto en términos de mini-ciclos? ¿por qué?
+
+- El orden de los mini ciclos fue bastante acertado, ayudo a estructurar bien las bases para el desarrollo de la torre, sin embargo la logica de la torre comenzo a volverse mas compleja en el manejo de los elementos, frenando el progreso de los demas ciclos en adelante y dejando algunos fallos a corregir.
+
+3. ¿Cuál fue el tiempo total invertido por cada uno de ustedes? (Horas/Hombre)
+
+- cada integrante dedico un total de 48 Horas Aproximadamente, desde el momento de publicacion del primer ciclo
+
+4. ¿Cuál consideran fue el mayor logro? ¿Por qué?
+
+- El mayor logro fue el poder generar las clases que contribuyen a la formacion de la torre, ademas de poder utilizarlas y darles una representacion visual que es capaz de ser manipulada, ya que esto nos permitio comenzar a interiorizar mas los aprendizajes y la manera de desarrollar.
+
+5. ¿Cuál consideran que fue el mayor problema técnico? ¿Qué hicieron para resolverlo?
+
+- El mayor problema tecnico ha sido problemas en la logica, ya que al arreglar algo incorrecto, se daña otra parte de la logica, funcionando incorrectamente. no logramos resolverlo, pero encontramos lo fallos y lo que debemos hacer es reestruccturarlo, pero por falta de tiempo no pudimos en estos momentos.
+
+6. ¿Qué hicieron bien como equipo? ¿Qué se comprometen a hacer para mejorar los resultados?
+
+- como equipo tuvimos una buena disposcion al hacer y sacar el proyecto adelante, cada uno trabajo bastante y procuramos comunicarnos lo mas posible para el desarrollo del mismo de una forma clara y comprensible.
+
+- Nos comprometemos a coordinarnos mejor para mejorar el resultado de los proyectos.
+
+7. Considerando las prácticas XP incluidas en los laboratorios. ¿cuál fue la más útil? ¿por qué?
+
+- La practica XP sobre las pruebas en cada parte del codigo, nos permitio en una gran parte del desarrollo, el mantener la concistencia del codigo, las clases y demas.
+
+8. ¿Qué referencias usaron? ¿Cuál fue la más útil? Incluyan citas con estándares adecuados.
+
+- Oracle Corporation. (2023). ArrayList (Java Platform SE 17 ). Oracle Help Center. Recuperado el 15 de febrero de 2026, de https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html
+
+- DeepSeek. (2025). DeepSeek (versión del 24 de marzo) [Modelo de lenguaje grande]. https://chat.deepseek.com/
